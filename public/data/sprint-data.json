@@ -1,0 +1,17 @@
+{
+  "users": [
+    { "id": "u-admin", "name": "Admin", "email": "admin@example.com", "role": "admin" },
+    { "id": "u-1", "name": "Alice", "email": "alice@example.com", "role": "user" },
+    { "id": "u-2", "name": "Bob", "email": "bob@example.com", "role": "user" }
+  ],
+  "tasks": {
+    "new": [
+      { "id": "t-1", "title": "Task1", "assigneeId": null, "state": "new", "description": "Intro task" }
+    ],
+    "inprogress": [],
+    "blocked": [],
+    "resolved": [],
+    "done": []
+  },
+  "currentUserId": "u-admin"
+}
