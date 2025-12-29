@@ -1,8 +1,8 @@
 ## Tech Stack
--React
--Vite
--Vitest + React Tesing Library
--Accessibility (WCAG Compliant)
+- React
+- Vite
+- Vitest + React Tesing Library
+- Accessibility (WCAG Compliant)
 
 ## Scripts
 - npm run dev
