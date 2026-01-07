@@ -1,4 +1,6 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useReducer } from "react";
+import { useDispatch } from "react-redux";
+import { setInitialData, addUser as addUserRedux } from "./sprintSlice";
 import "./SprintBoard.css";
 
 import { Sidebar } from "./components/Sidebar";
@@ -13,6 +15,19 @@ export const COLUMNS = [
   { id: "resolved", title: "Resolved" },
   { id: "done", title: "Done" },
 ];
+
+function userFormReducer(state, action){
+  switch (action.type) {
+    case "SET_NAME":
+      return {...state, name: action.payload};
+    case "SET_EMAIL":
+      return {...state, email: action.payload};
+    case "RESET":
+      return { name: "", email: ""};
+    default:
+      return state;
+  }
+}
 
 const STORAGE_KEY = "sprint-board-db:v3";
 const DEFAULT_JSON_PATH = "/data/sprint-data.json";
@@ -43,6 +58,7 @@ const DEFAULT_DB = {
 export default function SprintBoard() {
   const [db, setDb] = useState(null);
   const dragItem = useRef(null);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     let canceled = false;
@@ -52,6 +68,7 @@ export default function SprintBoard() {
         if (raw) {
           const parsed = JSON.parse(raw);
           if (!canceled) setDb(parsed);
+          dispatch(setInitialData(parsed));
           return;
         }
       } catch (e) {
@@ -64,6 +81,7 @@ export default function SprintBoard() {
         const json = await res.json();
         if (!canceled) {
           setDb(json);
+          dispatch(setInitialData(parsed));
           try { localStorage.setItem(STORAGE_KEY, JSON.stringify(json)); } catch(e) {}
           return;
         }
@@ -72,6 +90,7 @@ export default function SprintBoard() {
       }
 
       if (!canceled) setDb(DEFAULT_DB);
+      dispatch(setInitialData(parsed));
     }
     init();
     return () => { canceled = true; };
@@ -96,6 +115,8 @@ export default function SprintBoard() {
   const [userErrors, setUserErrors] = useState({ name: "", email: "" });
   const [taskErrors, setTaskErrors] = useState({ title: "", description: "" });
   const [newTaskForm, setNewTaskForm] = useState({ title: "", description: "", assigneeId: null});
+
+  const [userFormState, dispatchUserForm] = React.useReducer(userFormReducer, {name: "", email: ""});
 
   function saveDb(patch) {
     setDb(prev => {
@@ -158,6 +179,9 @@ export default function SprintBoard() {
 
     const u = { id: uid("u"), name, email, role: "user" };
     saveDb(prev => ({ ...prev, users: [...prev.users, u] }));
+
+    dispatch(addUserRedux(u));
+
     closeCreateUserModal();
     setNewUserForm({ name: "", email: ""});
   }
@@ -442,7 +466,11 @@ export default function SprintBoard() {
               </select>
             </label> */}
             <div className="sb-modal-actions">
-              <button onClick={closeCreateUserModal}>Cancel</button>
+              {/* <button onClick={closeCreateUserModal}>Cancel</button> */}
+              <button onClick={()=>{
+                dispatchUserForm({ type: "RESET"});
+                closeCreateUserModal();
+              }}>Cancel</button>
               <button onClick={() => addUser(newUserForm) }>Create</button>
             </div>
           </div>
