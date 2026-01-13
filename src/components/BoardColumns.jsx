@@ -26,26 +26,26 @@ export function BoardColumns({
             onDragOver={e => e.preventDefault()}
           >
             {(tasks[col.id] || [])
-              .filter(boardFilter)
-              .map(item => (
+              .filter((task) => boardFilter(task))
+              .map(task => (
                 <article
-                  key={item.id}
+                  key={task.id}
                   draggable
                   className="card-compact column-card"
-                  onDragStart={e => onDragStart(e, col.id, item.id)}
+                  onDragStart={e => onDragStart(e, col.id, task.id)}
                 >
                   {/* Card Header */}
                   <div className="card-top">
                     <div className="card-main">
-                      <div className="card-title">{item.title}</div>
+                      <div className="card-title">{task.title}</div>
                       <div className="card-sub">
-                        {item.assigneeId ? item.assigneeId : "Unassigned"}
+                        {task.assigneeId ? task.assigneeId : "Unassigned"}
                       </div>
                     </div>
 
                     <div className="card-meta">
                       <div className="badge small">
-                        <span className={`state-dot state-${item.state}`} />
+                        <span className={`state-dot state-${task.state}`} />
                       </div>
                       {/* <div className="badge count">●</div> */}
                     </div>
@@ -53,13 +53,13 @@ export function BoardColumns({
 
                   {/* Card Actions */}
                   <div className="card-actions">
-                    <button onClick={() => setShowTaskView(findTaskById(item.id))}>
+                    <button onClick={() => setShowTaskView(findTaskById(task.id))}>
                       View
                     </button>
 
                     <button
                       onClick={() => {
-                        const fullTask = findTaskById(item.id);
+                        const fullTask = findTaskById(task.id);
                         setShowTaskEdit(fullTask);
                       }}
                     >
@@ -71,7 +71,7 @@ export function BoardColumns({
                         aria-label="Delete task"
                         onClick={() => {
                             if (window.confirm("Delete this task?")) {
-                            deleteTask(col.id, item.id);
+                            deleteTask(col.id, task.id);
                             }
                         }}
                         >

@@ -1,6 +1,20 @@
 import React from "react";
 
-export function Sidebar({ users, tasks, currentUserId, collapsed, onToggle, onUserSelect }) {
+export function Sidebar({
+  users,
+  tasks,
+  currentUserId,
+  collapsed,
+  onToggle,
+  onUserSelect,
+  isAdmin
+}) {
+  // Admin → sees all users IN SAME ORDER
+  // User  → sees only themselves, BUT order remains unchanged
+  const visibleUsers = isAdmin
+    ? users
+    : users.filter(u => u.id === currentUserId);
+
   return (
     <aside className={`sb-sidebar ${collapsed ? "collapsed" : ""}`}>
       <div className="sb-sidebar-head">
@@ -11,7 +25,7 @@ export function Sidebar({ users, tasks, currentUserId, collapsed, onToggle, onUs
       </div>
 
       <div className="sb-userlist">
-        {users.map(user => {
+        {visibleUsers.map(user => {
           const assignedCount = Object.values(tasks)
             .flat()
             .filter(t => t.assigneeId === user.id).length;
@@ -31,7 +45,6 @@ export function Sidebar({ users, tasks, currentUserId, collapsed, onToggle, onUs
                 </div>
               </div>
 
-              {/* Expanded Content */}
               <div className="sb-user-collapse">
                 <div>Role: {user.role}</div>
                 <div>Assigned: {assignedCount}</div>

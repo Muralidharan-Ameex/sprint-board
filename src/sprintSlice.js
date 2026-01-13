@@ -20,6 +20,12 @@ const sprintSlice = createSlice({
         addUser(state, action){
             state.users.push(action.payload);
         },
+        // login(state, action){
+        //     state.currentUserId = action.payload;
+        // },
+        // logout(state){
+        //     state.currentUserId = null;
+        // }
         // addTask(state, action){
         //     state.tasks.new.push(action.payload);
         // },
